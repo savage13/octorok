@@ -1,6 +1,6 @@
 
 import { ChannelType, MessageType } from 'discord.js'
-import { get_live_channels_by_game, get_live_channels_by_name } from './twitch.js'
+import { get_live_channels_by_game, get_live_channels_by_name, get_user_by_name } from './twitch.js'
 import { timedelta } from './timedelta.js'
 import { config } from './config.js'
 
@@ -70,6 +70,19 @@ async function update_online(gid) {
     let chan = await get_live_channels_by_name(streamers)
     if(chan) {
         chan = chan.data || []
+        let user_names = chan.map(c => c.user_login)
+        if(user_names.length > 0) {
+            const users = await get_user_by_name(user_names)
+            if(users) {
+                for(const user of users.data) {
+                    for(const c of chan) {
+                        if(user.login == c.user_login) {
+                            c.thumbnail_url = user.profile_image_url
+                        }
+                    }
+                }
+            }
+        }
         channels.push( ... chan)
     }
 

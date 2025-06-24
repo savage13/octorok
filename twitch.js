@@ -40,12 +40,23 @@ async function get_game_id(game_name, headers = Headers) {
     return games.data[0]
 }
 
+export async function get_user_by_name(user_name, headers = Headers) {
+    const BASE = `${HELIX}/users`
+    if(!(Array.isArray(user_name))) {
+        user_name = Array(user_name)
+    }
+    user_name = user_name.map(name => ['login', name])
+    const pars = new URLSearchParams(user_name)
+    const url = `${BASE}?${pars.toString()}`
+    return try_fetch(url, headers)
+}
+
 export async function get_live_channels_by_name(user_id, headers = Headers) {
     const BASE = `${HELIX}/streams`
     if(!(Array.isArray(user_id))) {
         user_id = Array(user_id)
     }
-    user_id = user_id.map(uid => ['user_id', uid])
+    user_id = user_id.map(uid => ['user_login', uid])
     const pars = new URLSearchParams(user_id)
     const url = `${BASE}?${pars.toString()}`
     return try_fetch(url, headers)
