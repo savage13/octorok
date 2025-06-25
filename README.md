@@ -3,8 +3,6 @@
 Watches twitch streams and notifies discord
 
 ## Setup
-[Discord Bot Invite](https://discord.com/oauth2/authorize?client_id=1386360009008349264&permissions=223232&integration_type=0&scope=bot+applications.commands)
-
 *Warning: This is private bot, please ask permission before using*
 
 **Discord Setup**
@@ -89,7 +87,7 @@ Default: `empty`
 
 ### Get URL Invite
 
-This should generate the URL above in the Setup. It is here for the author to remember how to do things. You can safely ignore this
+~~This should generate the URL above in the Setup.~~ It is here for the author to remember how to do things. You can safely ignore this
 
 - https://discord.com/developers/applications
 - Click on Application in Interest (Octorok)
