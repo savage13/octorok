@@ -3,11 +3,12 @@ import { ChannelType, MessageType } from 'discord.js'
 import { get_live_channels_by_game, get_live_channels_by_name, get_user_by_name } from './twitch.js'
 import { timedelta } from './timedelta.js'
 import { config } from './config.js'
+import { log } from './log.js'
 
 let client = undefined
 
 async function update_online(gid) {
-    console.log(`Update stream listings ... ${new Date().toISOString()}`)
+    log.log(gid, `Update stream listings ... ${new Date().toISOString()}`)
     const channel_name = config.get(gid, 'channel')
     let channel = client.channels.cache.find(
         (c) => {
@@ -22,11 +23,11 @@ async function update_online(gid) {
         }
     )
     if(channel === undefined) {
-        console.log(`Cannot find channel: ${channel_name}`)
+        log.log(gid, `Cannot find channel: ${channel_name}`)
         return
     }
 
-    console.log(`   Guild: ${channel.guild.name} Channel: ${channel.name}`)
+    log.log(gid, `   Guild: ${channel.guild.name} Channel: ${channel.name}`)
     const messages = await channel.messages.fetch({limit: 100})
 
     let url_old = {}
@@ -39,10 +40,10 @@ async function update_online(gid) {
             url_old[url] = 0
         url_old[url] += 1
     })
-    //console.log(url_old)
+    //log.log(gid, url_old)
     for(const [url, count] of Object.entries(url_old)) {
         if(count > 1) {
-            console.log(`   Multuple messages for ${url} ${count} ${channel.guild.name}`)
+            log.log(gid, `   Multuple messages for ${url} ${count} ${channel.guild.name}`)
             const msgs = messages
                   .filter(m => m.embeds.length)
                   .filter(m => m.embeds[0].data.url == url)
@@ -104,8 +105,8 @@ async function update_online(gid) {
     let add = url.difference(url_old)
     let keep = url.intersection(url_old)
 
-    // console.log('    ', '+', add, '-', remove, '=', keep)
-    console.log(`     add ${add.size} remove ${remove.size} keep ${keep.size}`)
+    // log.log(gid, '    ', '+', add, '-', remove, '=', keep)
+    log.log(gid, `     add ${add.size} remove ${remove.size} keep ${keep.size}`)
 
     messages.each(m => {
         let url = m.embeds[0].data.url

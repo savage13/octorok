@@ -2,6 +2,8 @@
 import * as fs from 'fs'
 import 'dotenv/config'
 
+import { log } from './log.js'
+
 const HELIX = 'https://api.twitch.tv/helix'
 
 const speedrun_tags = [
@@ -19,7 +21,7 @@ const Headers = {
 async function try_fetch(url, headers) {
     const res = await fetch(url, { headers })
     if(!res.ok) {
-        console.error(`${res.status}: ${res.statusText} ${res.url}`)
+        console.log(`${res.status}: ${res.statusText} ${res.url}`)
         return undefined
     }
     return res.json()

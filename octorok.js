@@ -9,6 +9,7 @@ import { Collection, MessageFlags, ChannelType, MessageType } from 'discord.js'
 import { streams } from './streams.js'
 import { config } from './config.js'
 import { update } from './update.js'
+import { log } from './log.js'
 
 import { SlashCommandBuilder } from 'discord.js'
 
@@ -19,6 +20,7 @@ const guildId = process.env.DISCORD_GUILD_ID
 const client = new Client({ intents: [ GatewayIntentBits.Guilds ] })
 
 update.set_client(client)
+log.set_client(client)
 
 client.commands = new Collection()
 client.commands.set(streams.data.name, streams)
@@ -61,7 +63,7 @@ client.once(Events.ClientReady, async (readyClient) => {
     console.log(`Logged in as ${readyClient.user.tag}`)
     readyClient.guilds.cache.each(guild => {
 
-        console.log(`Guild: ${guild.name} ID: ${guild.id}`);
+        log.log(guild.id, `Guild: ${guild.name} ID: ${guild.id}`);
         config.read(guild.id)
         update.start(guild.id)
     })

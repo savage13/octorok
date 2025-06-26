@@ -1,5 +1,6 @@
 
 import * as fs from 'fs';
+import { log } from './log.js'
 
 let CONFIG = {}
 
@@ -17,17 +18,18 @@ const default_config = {
     channel: "streaming",
     ignore: [],
     keyword: [],
+    log: "syslog",
 }
 
 function config_read(gid) {
     const filename = config_filename(gid)
     if(!(fs.existsSync(filename))) {
-        console.log("generate new file", filename)
+        log.log(gid, "generate new file", filename)
         CONFIG[gid] = structuredClone(default_config)
         CONFIG[gid].gid = gid
         config_write(gid)
     }
-    console.log("config_read", filename)
+    log.log(gid, "config_read", filename)
     CONFIG[gid] = JSON.parse(fs.readFileSync(config_filename(gid),'utf8'))
     if(!('gid' in CONFIG[gid])) {
         CONFIG[gid].gid = gid
@@ -38,6 +40,9 @@ function config_read(gid) {
     }
     if(!('keyword' in CONFIG[gid])) {
         CONFIG[gid].keyword = []
+    }
+    if(!('log' in CONFIG[gid])) {
+        CONFIG[gid].log = "syslog"
     }
 
 }

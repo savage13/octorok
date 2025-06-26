@@ -1,3 +1,6 @@
+
+import { log } from './log.js'
+
 const S_TO_MS = 1000
 const M_TO_S = 60
 const H_TO_M = 60
