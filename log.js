@@ -6,6 +6,8 @@ import { config } from './config.js'
 let client = undefined
 let messages = {}
 
+const MAX_MINUTES = 60.0
+
 function log_clear(gid) {
     messages[gid] = []
 }
@@ -32,6 +34,18 @@ async function log_write(gid) {
         //console.log(`Cannot find channel: ${channel_name}`)
         return log_clear(gid)
     }
+
+    // Find messages to delete; > MAX_MINUTES
+    let now = new Date().getTime()
+    let old_messages = await channel.messages.fetch({limit: 100});
+    old_messages = old_messages.filter(m => {
+        const dt_min = (now - m.createdTimestamp)/(1000 * 60)
+        return (client.user.id == m.author.id) && (dt_min > MAX_MINUTES);
+    })
+    if(old_messages.size > 0) {
+        await channel.bulkDelete(old_messages).catch(console.error);
+    }
+
     const content = messages[gid].join("\n")
     if(!content || content == "") {
         return log_clear(gid)
