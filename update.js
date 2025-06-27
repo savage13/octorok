@@ -206,9 +206,10 @@ function by_channel(channel, keywords) {
 function unique_channels(channels) {
     let tmp = {}
     for(const c of channels) {
-        if(tmp[c.id])
+        const id = c.user_login || c.broadcaster_login
+        if(tmp[id])
             continue
-        tmp[c.id] = c
+        tmp[id] = c
     }
     return Object.values(tmp)
 }
