@@ -122,7 +122,7 @@ async function update_online(gid) {
         let content = ""
         for(const name of streamers) {
             if(url.toLowerCase() == `https://twitch.tv/${name.toLowerCase()}`) {
-                content = `@everyone ${name} is live!`
+                //content = `@everyone ${name} is live!`
                 break
             }
         }
