@@ -68,25 +68,26 @@ async function update_online(gid) {
     channels = channels.filter(c => by_channel(c, keywords))
 
     const streamers = config.get(channel.guildId, 'streamers')
-    let chan = await get_live_channels_by_name(streamers)
-    if(chan) {
-        chan = chan.data || []
-        let user_names = chan.map(c => c.user_login)
-        if(user_names.length > 0) {
-            const users = await get_user_by_name(user_names)
-            if(users) {
-                for(const user of users.data) {
-                    for(const c of chan) {
-                        if(user.login == c.user_login) {
-                            c.thumbnail_url = user.profile_image_url
+    if(streamers.length > 0) {
+        let chan = await get_live_channels_by_name(streamers)
+        if(chan) {
+            chan = chan.data || []
+            let user_names = chan.map(c => c.user_login)
+            if(user_names.length > 0) {
+                const users = await get_user_by_name(user_names)
+                if(users) {
+                    for(const user of users.data) {
+                        for(const c of chan) {
+                            if(user.login == c.user_login) {
+                                c.thumbnail_url = user.profile_image_url
+                            }
                         }
                     }
                 }
             }
+            channels.push( ... chan)
         }
-        channels.push( ... chan)
     }
-
     channels.sort((a,b) => a.started_at.localeCompare(b.started_at))
     channels = unique_channels(channels)
 
