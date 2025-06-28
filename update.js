@@ -109,6 +109,8 @@ async function update_online(gid) {
     log.log(gid, `     add ${add.size} remove ${remove.size} keep ${keep.size}`)
 
     messages.each(m => {
+        if(m.embeds.length == 0)
+            return
         let url = m.embeds[0].data.url
         if(remove.has(url)) {
             m.delete().catch(console.error)
