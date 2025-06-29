@@ -18,6 +18,7 @@ const default_config = {
     channel: "streaming",
     ignore: [],
     keyword: [],
+    ping: "",
     log: "syslog",
 }
 
@@ -44,7 +45,9 @@ function config_read(gid) {
     if(!('log' in CONFIG[gid])) {
         CONFIG[gid].log = "syslog"
     }
-
+    if(!('ping' in CONFIG[gid])) {
+        CONFIG[gid].ping = ""
+    }
 }
 
 function config_write(gid) {

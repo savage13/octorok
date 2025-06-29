@@ -54,6 +54,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 client.on(Event.GuildCreate, async (guild) => {
     console.log("Joined a new guild: " + guild.name);
+    config.read(guild.id)
+    update.start(guild.id)
+
 })
 client.on(Event.GuildDelete, async (guild) => {
     console.log("Left a guild: " + guild.name);
@@ -67,8 +70,6 @@ client.once(Events.ClientReady, async (readyClient) => {
         config.read(guild.id)
         update.start(guild.id)
     })
-    //update_online()
-    //update.start()
 })
 
 client.login(token)

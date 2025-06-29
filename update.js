@@ -118,16 +118,18 @@ async function update_online(gid) {
         }
     })
 
+    const ping = config.get(channel.guildId, 'ping')
     for(const m of embeds) {
         let url = m.url
         let content = ""
-        for(const name of streamers) {
-            if(url.toLowerCase() == `https://twitch.tv/${name.toLowerCase()}`) {
-                //content = `@everyone ${name} is live!`
-                break
+        if(ping && ping != "") {
+            for(const name of streamers) {
+                if(url.toLowerCase() == `https://twitch.tv/${name.toLowerCase()}`) {
+                    content = `${ping} ${name} is live!`
+                    break
+                }
             }
         }
-        //console.log(url, content)
         if(add.has(url)) {
             await channel.send({ embeds: [ m ], content }).catch(console.error)
         }
