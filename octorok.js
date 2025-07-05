@@ -67,9 +67,12 @@ client.once(Events.ClientReady, async (readyClient) => {
     readyClient.guilds.cache.each(guild => {
 
         log.log(guild.id, `Guild: ${guild.name} ID: ${guild.id}`);
-        config.read(guild.id)
-        update.start(guild.id)
+        setTimeout(() => {
+            config.read(guild.id)
+            update.start(guild.id)
+        }, 5 * 1000); 
     })
+
 })
 
 client.login(token)

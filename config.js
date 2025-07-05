@@ -14,7 +14,7 @@ const default_config = {
         "The Legend of Zelda: Tears of the Kingdom"
     ],
     streamers: [  ],
-    update: "3m",
+    update: "5m",
     channel: "streaming",
     ignore: [],
     keyword: [],
