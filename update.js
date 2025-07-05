@@ -7,6 +7,38 @@ import { log } from './log.js'
 
 let client = undefined
 
+function* chunks(arr, n) {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n);
+  }
+}
+
+function memoize(fn, uid) {
+    const cache = {}
+    return async function() {
+        const args = arguments
+        const out = []
+        const update = []
+        const now = Math.floor(new Date().getTime()/1000)
+        const timespan = 60 * 60 * 24 * 7;
+        for(const arg of args) {
+            if(arg in cache && cache[arg].expires > now) {
+                out.push( cache[arg].data )
+            } else {
+                update.push(arg)
+            }
+        }
+        if(update.length > 0) {
+            let updates = await fn.apply(undefined, update)
+            for(const arg of updates) {
+                cache[uid(arg)] { data: arg, expires: now + timespan }
+                out.push(arg)
+            }
+        }
+        return out
+    }
+}
+
 async function update_online(gid) {
     log.log(gid, `Update stream listings ... ${new Date().toISOString()}`)
     const channel_name = config.get(gid, 'channel')
@@ -69,25 +101,29 @@ async function update_online(gid) {
 
     const streamers = config.get(channel.guildId, 'streamers')
     if(streamers.length > 0) {
-        let chan = await get_live_channels_by_name(streamers)
-        if(chan) {
-            chan = chan.data || []
-            let user_names = chan.map(c => c.user_login)
-            if(user_names.length > 0) {
-                const users = await get_user_by_name(user_names)
-                if(users) {
-                    for(const user of users.data) {
-                        for(const c of chan) {
-                            if(user.login == c.user_login) {
-                                c.thumbnail_url = user.profile_image_url
+        chunks(streamers, 100).forEach(chunk => {
+            let chan = await get_live_channels_by_name(chunk)
+            if(chan) {
+                chan = chan.data || []
+                // All of this, just to get the profile_image_url
+                let user_names = chan.map(c => c.user_login)
+                if(user_names.length > 0) {
+                    const users = await get_user_by_name(user_names)
+                    if(users) {
+                        for(const user of users.data) {
+                            for(const c of chan) {
+                                if(user.login == c.user_login) {
+                                    c.thumbnail_url = user.profile_image_url
+                                }
                             }
                         }
                     }
                 }
+                channels.push( ... chan)
             }
-            channels.push( ... chan)
-        }
+        })
     }
+
     channels.sort((a,b) => a.started_at.localeCompare(b.started_at))
     channels = unique_channels(channels)
 
