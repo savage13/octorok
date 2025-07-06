@@ -1,8 +1,12 @@
 
 import * as fs from 'fs';
 import { log } from './log.js'
+import { timedelta } from './timedelta.js'
 
 let CONFIG = {}
+
+const min_update_value = "3m"
+const min_update_value_ms = timedelta(min_update_value)
 
 function config_filename(gid) {
     return `savagebot_gid_${gid}.json`
@@ -69,6 +73,7 @@ function config_add(gid, kind, name) {
         config_write(gid)
     return ok
 }
+
 function config_remove(gid, kind, name) {
     if(!(gid in CONFIG))
        return false
@@ -82,11 +87,18 @@ function config_remove(gid, kind, name) {
         config_write(gid)
     return m == n - 1;
 }
+
 function config_set(gid, name, value) {
     if(!(gid in CONFIG))
        return false
     if(!(name in CONFIG[gid]))
         return false
+    if(name == "update") {
+        const t = timedelta(value, 0)
+        if(t < min_update_value_ms ) {
+            value = min_update_value
+        }
+    }
     CONFIG[gid][name] = value
     config_write(gid)
     return true

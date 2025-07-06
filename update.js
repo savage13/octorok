@@ -31,7 +31,7 @@ function memoize(fn, uid) {
         if(update.length > 0) {
             let updates = await fn.apply(undefined, update)
             for(const arg of updates) {
-                cache[uid(arg)] { data: arg, expires: now + timespan }
+                cache[uid(arg)] = { data: arg, expires: now + timespan }
                 out.push(arg)
             }
         }
@@ -101,7 +101,7 @@ async function update_online(gid) {
 
     const streamers = config.get(channel.guildId, 'streamers')
     if(streamers.length > 0) {
-        chunks(streamers, 100).forEach(chunk => {
+        for(const chunk of chunks(streamers, 100)) {
             let chan = await get_live_channels_by_name(chunk)
             if(chan) {
                 chan = chan.data || []
@@ -121,7 +121,7 @@ async function update_online(gid) {
                 }
                 channels.push( ... chan)
             }
-        })
+        }
     }
 
     channels.sort((a,b) => a.started_at.localeCompare(b.started_at))

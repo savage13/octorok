@@ -1,10 +1,16 @@
 
 import * as fs from 'fs'
-import 'dotenv/config'
 
 import { log } from './log.js'
 
-const HELIX = 'https://api.twitch.tv/helix'
+let HELIX = 'https://api.twitch.tv/helix'
+let OAUTH2 = 'https://id.twitch.tv/oauth2/token'
+
+export function set_mock_server() {
+    HELIX = 'http://localhost:8080/units'
+    OAUTH2 = 'http://localhost:8080/auth/token'
+    console.log("Using Mock Server", HELIX)
+}
 
 const speedrun_tags = [
     "speedrun",
@@ -13,9 +19,26 @@ const speedrun_tags = [
     "bingo", "bingus"
 ].map(v => v.toLowerCase())
 
-const Headers = {
-    Authorization: `Bearer ${process.env.ACCESSTOKEN}`,
-    'Client-Id': process.env.CLIENTID,
+let Headers = {}
+export function set_twitch_token(access_token, client_id) {
+    Headers = {
+        Authorization: `Bearer ${access_token}`,
+        'Client-Id': client_id,
+    }
+}
+
+export async function get_twitch_access_token(client_id, client_secret) {
+    const url = OAUTH2
+    const args = new URLSearchParams({
+        client_id, client_secret,
+        grant_type: 'client_credentials'
+    })
+    const res = await fetch(`${url}?${args}`, { method: "POST" } )
+    if(!res.ok) {
+        console.error(res)
+        return undefined
+    }
+    return res.json()
 }
 
 async function try_fetch(url, headers) {
