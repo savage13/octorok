@@ -22,7 +22,7 @@ const guildId = process.env.DISCORD_GUILD_ID
 
 const client = new Client({ intents: [ GatewayIntentBits.Guilds ] })
 
-const DEBUG = process.env.DEBUG || False
+const DEBUG = process.env.DEBUG || false
 
 update.set_client(client)
 log.set_client(client)
