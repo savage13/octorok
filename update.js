@@ -185,6 +185,8 @@ function channel_embed(channel) {
         channel.display_name = channel.user_name
     if(!(channel.broadcaster_login))
         channel.broadcaster_login = channel.user_login
+    const display_name_escape = channel.display_name.replaceAll("_", "\_")
+    const broadcaster_login_escape = channel.broadcaster_login.replaceAll("_", "\_")
 
     let color = 0x9FFFC8
     if(channel.game_name.includes("Breath of the Wild"))
@@ -202,7 +204,7 @@ function channel_embed(channel) {
         thumbnail: {
 		        url: channel.thumbnail_url,
 	      },
-        title: `${channel.display_name} is live: https://www.twitch.tv/${channel.broadcaster_login}`,
+        title: `${display_name_escape} is live: https://www.twitch.tv/${broadcaster_login_escape}`,
         url: `https://twitch.tv/${channel.broadcaster_login}`,
         description: channel.title,
         timestamp: new Date().toISOString(),
