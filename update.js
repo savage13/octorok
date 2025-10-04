@@ -96,7 +96,7 @@ async function update_online(gid) {
         channels.push( ... chans )
     }
 
-    const keywords =  config.get(channel.guildId, 'keyword')
+    const keywords =  config.get(channel.guildId, 'keyword').map(v => v.toLowerCase())
     channels = channels.filter(c => by_channel(c, keywords))
 
     const streamers = config.get(channel.guildId, 'streamers')
