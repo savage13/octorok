@@ -58,13 +58,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 })
 
-client.on(Event.GuildCreate, async (guild) => {
+client.on(Events.GuildCreate, async (guild) => {
     console.log("Joined a new guild: " + guild.name);
     config.read(guild.id)
     update.start(guild.id)
 
 })
-client.on(Event.GuildDelete, async (guild) => {
+client.on(Events.GuildDelete, async (guild) => {
     console.log("Left a guild: " + guild.name);
 })
 
